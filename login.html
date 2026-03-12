@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ユーザー名を入力してチャットを始めよう" />
+  <title>ログイン - チャットアプリ</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#06C755" />
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ヘッダー -->
+    <header class="app-header">
+      <h1>🗨️ チャットアプリ</h1>
+    </header>
+
+    <!-- ログインフォーム -->
+    <main class="login-container" id="loginSection">
+      <div class="login-logo">💬</div>
+
+      <div class="login-title">
+        <h2>はじめよう！</h2>
+        <p>ユーザー名を入力してください。<br>登録・パスワード不要ですぐ使えます。</p>
+      </div>
+
+      <form class="login-form" id="loginForm" autocomplete="off">
+        <div class="input-group">
+          <label for="usernameInput">ユーザー名</label>
+          <input
+            type="text"
+            id="usernameInput"
+            class="input-field"
+            placeholder="例：Ken"
+            maxlength="20"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-primary" id="startBtn">
+          はじめる
+        </button>
+      </form>
+    </main>
+
+    <!-- 登録完了 → ID表示セクション -->
+    <section class="login-container hidden" id="doneSection">
+      <div class="login-logo">✅</div>
+
+      <div class="login-title">
+        <h2>登録完了！</h2>
+        <p>下のあなたのIDを友達に教えて<br>チャットを始めましょう。</p>
+      </div>
+
+      <div class="user-id-badge" id="myIdBadge">
+        <span class="id-label">あなたのID</span>
+        <span class="id-value" id="displayId"></span>
+        <button class="copy-btn" id="copyBtn" title="IDをコピー">📋</button>
+      </div>
+
+      <a href="friends.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;padding:15px;">
+        友達を追加する
+      </a>
+    </section>
+
+    <!-- トースト通知 -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { auth } from './js/auth.js';
+    auth.init();
+  </script>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js').catch(console.warn);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="友達を追加してチャットを始めよう" />
+    <title>友達 - チャットアプリ</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#06C755" />
+</head>
+
+<body>
+    <div class="page-wrapper">
+
+        <!-- ヘッダー -->
+        <header class="app-header">
+            <h1>👥 友達</h1>
+            <button class="header-btn" id="myIdBtn" title="マイID確認">🪪</button>
+        </header>
+
+        <!-- 友達検索 -->
+        <div class="friends-search">
+            <input type="text" id="searchInput" class="input-field" placeholder="ユーザーIDを入力して検索" autocomplete="off"
+                maxlength="30" />
+            <button class="btn-search" id="searchBtn">検索</button>
+        </div>
+
+        <!-- 検索結果 -->
+        <div id="searchResult" class="hidden" style="padding:0 16px 8px;">
+            <!-- JS で動的生成 -->
+        </div>
+
+        <!-- 友達一覧 -->
+        <section class="friends-list" id="friendsList">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">👤</div>
+                <p>まだ友達がいません。<br>ユーザーIDを検索して追加しましょう。</p>
+            </div>
+        </section>
+
+        <!-- マイID モーダル -->
+        <div class="modal-overlay hidden" id="myIdModal">
+            <div class="modal">
+                <h3>🪪 あなたのID</h3>
+                <p>このIDを友達に教えてください。</p>
+                <div class="user-id-badge" style="margin-bottom:20px;">
+                    <span class="id-value" id="modalMyId" style="text-align:center;width:100%;"></span>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="copyMyIdBtn">コピー</button>
+                    <button class="btn-primary" style="width:auto;padding:10px 24px;" id="closeModal">閉じる</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- トースト -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script type="module" src="js/friends.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js').catch(console.warn);
+        }
+    </script>
+</body>
+
+</html>
