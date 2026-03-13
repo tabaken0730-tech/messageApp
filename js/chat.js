@@ -231,16 +231,37 @@ try {
 
 // ─── 初期化 ───
 (async () => {
-    await loadFriendInfo();
-    listenMessages();
-
-    // FCMトークンを保存（通知許可）
     try {
-        const token = await getFCMToken();
-        if (token) {
-            await setDoc(doc(db, 'users', me.userId), { fcmToken: token }, { merge: true });
-        }
-    } catch (e) {
-        console.warn('FCMトークン更新エラー:', e);
+        // 並列で読み込みを開始
+        const tasks = [
+            loadFriendInfo().catch(e => console.warn('相手情報取得失敗:', e)),
+            new Promise((resolve) => {
+                listenMessages();
+                // Firestoreの初期読み込みが完了したら（あるいは空でも初回発火したら）resolve
+                // ただし念のためタイムアウトを設ける
+                setTimeout(resolve, 5000);
+            })
+        ];
+
+        await Promise.all(tasks);
+    } catch (err) {
+        console.error('初期化エラー:', err);
+    } finally {
+        // いかなる場合でも必ずローディングを消す
+        msgLoading.classList.add('hidden');
+        msgInput.disabled = false;
+        msgInput.focus();
     }
+
+    // FCMトークンの保存（通知許可） - UIをブロックしない
+    setTimeout(async () => {
+        try {
+            const token = await getFCMToken();
+            if (token) {
+                await setDoc(doc(db, 'users', me.userId), { fcmToken: token }, { merge: true });
+            }
+        } catch (e) {
+            console.warn('FCMトークン更新エラー:', e);
+        }
+    }, 1000);
 })();
