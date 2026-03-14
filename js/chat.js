@@ -128,8 +128,7 @@ function createDateSep(dateStr) {
 function listenMessages() {
     const q = query(
         collection(db, 'messages'),
-        where('chat_id', '==', chatId),
-        orderBy('created_at', 'asc')
+        where('chat_id', '==', chatId)
     );
 
     let lastDate = '';

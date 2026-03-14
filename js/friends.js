@@ -167,8 +167,7 @@ async function addFriend(friendId, friendName) {
 function listenFriends() {
     const q = query(
         collection(db, 'friends'),
-        where('user_id', '==', me.userId),
-        orderBy('created_at', 'asc')
+        where('user_id', '==', me.userId)
     );
 
     onSnapshot(q, async (snapshot) => {
