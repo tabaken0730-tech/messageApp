@@ -2,7 +2,7 @@
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-const CACHE_NAME = 'chat-app-v1';
+const CACHE_NAME = 'chat-app-v2';
 const CACHE_URLS = [
   './',
   './index.html',
@@ -37,12 +37,26 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// ─── フェッチ：キャッシュファースト戦略 ───
+// ─── フェッチ：ネットワークファースト＆APIスキップ ───
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+
+  // FirestoreなどのAPIリクエストはServiceWorkerでキャッシュしない
+  if (url.hostname.includes('googleapis.com') || url.hostname.includes('firebase')) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) =>
-      cached || fetch(event.request)
-    )
+    fetch(event.request)
+      .then((response) => {
+        const resClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, resClone);
+        });
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 
